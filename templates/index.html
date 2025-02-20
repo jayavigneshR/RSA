@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure File Encryption & Decryption</title>
+    <style>
+        body {
+            background-image: url('https://blog.ipleaders.in/wp-content/uploads/2020/06/SEC0918-video-feature-slide1_900px.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 500px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        .section {
+            background: rgba(0, 188, 212, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn {
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            width: fit-content;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #00ffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>File Encryption & Decryption</h2>
+        <p>Encrypt and Decrypt video, audio, or text files securely</p>
+        
+        <div class="section">
+            <h3>ENCRYPT FILE</h3>
+            <form id="encryptForm" enctype="multipart/form-data">
+                <input type="file" name="file" class="file-input" required>
+                <button type="submit" class="btn">ENCRYPT</button>
+            </form>
+        </div>
+        
+        <div class="section">
+            <h3>DECRYPT FILE</h3>
+            <form id="decryptForm" enctype="multipart/form-data">
+                <input type="file" name="file" class="file-input" required>
+                <button type="submit" class="btn">DECRYPT</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("encryptForm").onsubmit = function(event) {
+            event.preventDefault();
+            let formData = new FormData(this);
+            fetch("/encrypt", { method: "POST", body: formData })
+                .then(response => response.blob())
+                .then(blob => {
+                    let url = window.URL.createObjectURL(blob);
+                    let a = document.createElement("a");
+                    a.href = url;
+                    a.download = "encrypted_file.enc";
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                });
+        };
+
+        document.getElementById("decryptForm").onsubmit = function(event) {
+            event.preventDefault();
+            let formData = new FormData(this);
+            fetch("/decrypt", { method: "POST", body: formData })
+                .then(response => response.blob())
+                .then(blob => {
+                    let url = window.URL.createObjectURL(blob);
+                    let a = document.createElement("a");
+                    a.href = url;
+                    a.download = "decrypted_file";
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                });
+        };
+    </script>
+</body>
+</html>
